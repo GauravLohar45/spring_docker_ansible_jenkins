@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "blacksmith/spring-app"
+        IMAGE_NAME = "YOUR_DOCKERHUB_USERNAME/spring-app"
         TAG = "latest"
     }
 
