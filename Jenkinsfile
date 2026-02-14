@@ -9,10 +9,11 @@ pipeline {
     stages {
 
         stage('Clone Code') {
-            steps {
-                git 'https://github.com/GauravLohar45/spring_docker_ansible_jenkins.git'
-            }
-        }
+    steps {
+        git branch: 'main', url: 'https://github.com/GauravLohar45/spring_docker_ansible_jenkins.git'
+    }
+}
+
 
         stage('Build JAR') {
             steps {
