@@ -1,105 +1,55 @@
 pipeline {
     agent any
 
-    parameters {
-        choice(
-            name: 'ACTION',
-            choices: ['build', 'deploy', 'remove'],
-            description: 'Choose pipeline action'
-        )
-        string(
-            name: 'IMAGE_NAME',
-            defaultValue: 'spring_project2003',
-            description: 'Docker image name'
-        )
-        string(
-            name: 'IMAGE_TAG',
-            defaultValue: 'v1',
-            description: 'Docker image tag'
-        )
-        string(
-            name: 'DOCKERHUB_USERNAME',
-            defaultValue: 'lohar45',
-            description: 'DockerHub username'
-        )
-    }
-
     environment {
-        IMAGE = "${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}"
+        IMAGE_NAME = "blacksmith/spring-app"
+        TAG = "latest"
     }
 
     stages {
 
-        /* ================= CHECKOUT ================= */
-        stage('Checkout Code') {
-            when { expression { params.ACTION == 'build' } }
+        stage('Clone Code') {
             steps {
-                git branch: 'master',
-                    url: 'https://github.com/GauravLohar45/spring_jenkins_mysql_docker.git',
-                    credentialsId: 'github-creds'
+                git 'https://github.com/GauravLohar45/spring_docker_ansible_jenkins.git'
             }
         }
 
-        /* ================= BUILD ================= */
+        stage('Build JAR') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
         stage('Build Docker Image') {
-            when { expression { params.ACTION == 'build' } }
             steps {
-                sh 'docker build -t $IMAGE .'
+                sh 'docker build -t $IMAGE_NAME:$TAG .'
             }
         }
 
-        stage('Docker Login') {
-            when { expression { params.ACTION == 'build' } }
+        stage('Docker Hub Login') {
             steps {
-                withCredentials([usernamePassword(
-                    credentialsId: 'dockerhub-5555',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
-                )]) {
-                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+                    sh 'echo $PASS | docker login -u $USER --password-stdin'
                 }
             }
         }
 
-        stage('Docker Push') {
-            when { expression { params.ACTION == 'build' } }
+        stage('Push Image') {
             steps {
-                sh 'docker push $IMAGE'
+                sh 'docker push $IMAGE_NAME:$TAG'
             }
         }
 
-        stage('Delete Local Image') {
-            when { expression { params.ACTION == 'build' } }
+        stage('Remove Local Image') {
             steps {
-                sh 'docker rmi $IMAGE || true'
+                sh 'docker rmi $IMAGE_NAME:$TAG'
             }
         }
 
-        /* ================= DEPLOY ================= */
-        stage('Deploy') {
-            when { expression { params.ACTION == 'deploy' } }
+        stage('Deploy via Ansible') {
             steps {
-                sh '''
-                docker-compose down || true
-                docker-compose pull
-                docker-compose up -d
-                '''
+                sh 'ansible-playbook deploy.yml'
             }
-        }
-
-        /* ================= REMOVE ================= */
-        stage('Remove') {
-            when { expression { params.ACTION == 'remove' } }
-            steps {
-                sh 'docker-compose down || true'
-            }
-        }
-    }
-
-    post {
-        always {
-            sh 'docker logout || true'
-            echo "Pipeline execution completed successfully"
         }
     }
 }
