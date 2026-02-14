@@ -8,13 +8,6 @@ pipeline {
 
     stages {
 
-        stage('Clone Code') {
-    steps {
-        git branch: 'main', url: 'https://github.com/GauravLohar45/spring_docker_ansible_jenkins.git'
-    }
-}
-
-
         stage('Build JAR') {
             steps {
                 sh 'mvn clean package'
