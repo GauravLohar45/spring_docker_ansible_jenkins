@@ -13,13 +13,7 @@ pipeline {
 
         stage('Build JAR (Dockerized Maven)') {
             steps {
-                sh '''
-                docker run --rm \
-                    -v "$PWD":/app \
-                    -w /app \
-                    maven:3.9.6-eclipse-temurin-17 \
-                    mvn clean package
-                '''
+                sh 'mvn clean package'
             }
         }
 
