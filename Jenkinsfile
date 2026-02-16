@@ -53,11 +53,15 @@ pipeline {
             }
         }
 
-        stage('Deploy via Ansible') {
-            steps {
-                sh 'ansible-playbook deploy.yml'
-            }
-        }
+       stage('Deploy via Ansible') {
+    steps {
+        sh '''
+        ANSIBLE_HOST_KEY_CHECKING=False \
+        ansible-playbook -i inventory.ini deploy.yml
+        '''
+    }
+}
+
     }
 
     post {
