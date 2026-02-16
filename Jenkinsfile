@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "gauravlohar45/spring-app"   // MUST be lowercase
+        IMAGE_NAME = "lohar45/akshay-ansibl:latest"   // MUST be lowercase
         TAG = "latest"
     }
 
