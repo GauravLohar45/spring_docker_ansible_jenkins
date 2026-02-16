@@ -1,17 +1,14 @@
 pipeline {
     agent any
-    
-    tools {
-        maven 'maven'    
-    }
+
     environment {
-        IMAGE_NAME = "YOUR_DOCKERHUB_USERNAME/spring-app"
+        IMAGE_NAME = "gauravlohar45/spring-app"   // MUST be lowercase
         TAG = "latest"
     }
 
     stages {
 
-        stage('Build JAR (Dockerized Maven)') {
+        stage('Build JAR') {
             steps {
                 sh 'mvn clean package'
             }
@@ -59,6 +56,12 @@ pipeline {
     post {
         always {
             cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully ✅'
+        }
+        failure {
+            echo 'Pipeline failed ❌ Check console output'
         }
     }
 }
