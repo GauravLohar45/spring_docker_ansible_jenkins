@@ -1,6 +1,9 @@
 pipeline {
     agent any
-
+    
+    tools {
+        maven 'maven'    
+    }
     environment {
         IMAGE_NAME = "YOUR_DOCKERHUB_USERNAME/spring-app"
         TAG = "latest"
