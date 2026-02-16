@@ -20,6 +20,13 @@ pipeline {
             }
         }
 
+        stage('Debug Files') {
+    steps {
+        sh 'ls -la'
+    }
+}
+
+
         stage('Docker Hub Login') {
             steps {
                 withCredentials([
