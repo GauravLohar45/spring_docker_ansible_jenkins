@@ -1,11 +1,6 @@
 pipeline {
     agent any
 
-    /* Ensures Jenkins provides Maven instead of relying on system */
-    tools {
-        maven 'Maven-3'          // Must match Global Tool Configuration name
-    }
-
     environment {
         IMAGE_NAME = "YOUR_DOCKERHUB_USERNAME/spring-app"
         TAG = "latest"
@@ -13,9 +8,15 @@ pipeline {
 
     stages {
 
-        stage('Build JAR') {
+        stage('Build JAR (Dockerized Maven)') {
             steps {
-                sh 'mvn clean package'
+                sh '''
+                docker run --rm \
+                    -v "$PWD":/app \
+                    -w /app \
+                    maven:3.9.6-eclipse-temurin-17 \
+                    mvn clean package
+                '''
             }
         }
 
@@ -58,16 +59,9 @@ pipeline {
         }
     }
 
-    /* Prevents pipeline from failing silently & improves cleanup */
     post {
         always {
             cleanWs()
-        }
-        failure {
-            echo 'Pipeline failed ❌ Check console output.'
-        }
-        success {
-            echo 'Pipeline completed successfully ✅'
         }
     }
 }
