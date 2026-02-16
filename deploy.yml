@@ -3,10 +3,13 @@
   become: true
 
   tasks:
-    - name: Pull Docker image
-      docker_container:
+
+    - name: Pull latest Docker image
+      community.docker.docker_container:
         name: spring_container
         image: lohar45/akshay-ansibl:latest
         state: started
+        restart_policy: always
+        recreate: true
         ports:
           - "8080:8080"
