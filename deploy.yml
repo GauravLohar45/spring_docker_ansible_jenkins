@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Pull Docker image
+      docker_container:
+        name: spring_container
+        image: lohar45/akshay-ansibl:latest
+        state: started
+        ports:
+          - "8080:8080"
