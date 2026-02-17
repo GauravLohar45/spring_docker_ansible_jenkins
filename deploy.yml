@@ -1,16 +1,18 @@
----
-- hosts: all
-  become: true
-
+- hosts: web
+  become: yes
   tasks:
 
-    - name: Run Spring Boot Container
-      community.docker.docker_container:
-        name: spring_container
-        image: lohar45/ansible_jek_pro:latest   # ✅ MUST match Jenkins
-        state: started
-        restart_policy: always
-        recreate: true
-        pull: true                              # ✅ CRITICAL
-        ports:
-          - "8085:8085"
+    - name: Stop old container
+      shell: docker stop springboot-container || true
+
+    - name: Remove old container
+      shell: docker rm springboot-container || true
+
+    - name: Remove old image
+      shell: docker rmi lohar45/ansible_jek_pro:latest || true
+
+    - name: Pull latest image
+      shell: docker pull lohar45/ansible_jek_pro:latest
+
+    - name: Run container
+      shell: docker run -d -p 8080:8080 --name springboot-container lohar45/ansible_jek_pro:latest
