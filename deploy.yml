@@ -13,4 +13,4 @@
         recreate: true
         pull: true                              # ✅ CRITICAL
         ports:
-          - "8085:8080"
+          - "8085:8085"
