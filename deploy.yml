@@ -4,12 +4,13 @@
 
   tasks:
 
-    - name: Pull latest Docker image
+    - name: Run Spring Boot Container
       community.docker.docker_container:
         name: spring_container
-        image: lohar45/akshay-ansibl:latest
+        image: lohar45/ansible_jek_pro:latest   # ✅ MUST match Jenkins
         state: started
         restart_policy: always
         recreate: true
+        pull: true                              # ✅ CRITICAL
         ports:
           - "8085:8080"
