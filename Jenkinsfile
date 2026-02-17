@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "lohar45/akshay-ansibl"  // MUST be lowercase
+        IMAGE_NAME = "lohar45/ansible_jek_pro"  // MUST be lowercase
         TAG = "latest"
     }
 
